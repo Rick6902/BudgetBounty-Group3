@@ -1,0 +1,84 @@
+CREATE TABLE USERS (
+    user_id        VARCHAR2(50) PRIMARY KEY,
+    name           VARCHAR2(100) NOT NULL,
+    email          VARCHAR2(100) NOT NULL,
+    password       VARCHAR2(100) NOT NULL,
+    registered_at  DATE NOT NULL
+);
+
+CREATE TABLE ADMIN (
+    admin_id   VARCHAR2(50) PRIMARY KEY,
+    username   VARCHAR2(100) NOT NULL,
+    password   VARCHAR2(100) NOT NULL,
+    email      VARCHAR2(100) NOT NULL,
+    role       VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE BANK_ACCOUNT (
+    account_id      VARCHAR2(50) PRIMARY KEY,
+    user_id         VARCHAR2(50) NOT NULL,
+    account_number  VARCHAR2(30) NOT NULL,
+    ifsc            VARCHAR2(20) NOT NULL,
+    bank_name       VARCHAR2(100) NOT NULL,
+    account_type    VARCHAR2(30) NOT NULL,
+    CONSTRAINT fk_bank_user FOREIGN KEY (user_id) REFERENCES USERS(user_id)
+);
+
+
+CREATE TABLE UPI_ID (
+    upi_id       VARCHAR2(50) PRIMARY KEY,
+    user_id      VARCHAR2(50) NOT NULL,
+    upi_address  VARCHAR2(100) NOT NULL,
+    CONSTRAINT fk_upi_user FOREIGN KEY (user_id) REFERENCES USERS(user_id)
+);
+
+CREATE TABLE RECIPIENT (
+    recipient_id     VARCHAR2(50) PRIMARY KEY,
+    name             VARCHAR2(100) NOT NULL,
+    upi_id           VARCHAR2(100),
+    account_number   VARCHAR2(30),
+    IFSC             VARCHAR2(20),
+    bank_name        VARCHAR2(100)
+);
+
+CREATE TABLE TRANSACTIONS (
+    txn_id         VARCHAR2(50) PRIMARY KEY,
+    user_id        VARCHAR2(50) NOT NULL,
+    recipient_id   VARCHAR2(50) NOT NULL,
+    amount         NUMBER(10,2) NOT NULL,
+    txn_type       VARCHAR2(50) NOT NULL,
+    txn_status     VARCHAR2(50) NOT NULL,
+    txn_date       DATE NOT NULL,
+    txn_channel    VARCHAR2(50) NOT NULL,
+    rewards_earned NUMBER(5) NOT NULL,
+    CONSTRAINT fk_txn_user FOREIGN KEY (user_id) REFERENCES USERS(user_id),
+    CONSTRAINT fk_txn_recipient FOREIGN KEY (recipient_id) REFERENCES RECIPIENT(recipient_id)
+);
+
+CREATE TABLE REWARD (
+    reward_id     VARCHAR2(50) PRIMARY KEY,
+    user_id       VARCHAR2(50) NOT NULL,
+    txn_id        VARCHAR2(50) NOT NULL,
+    reward_type   VARCHAR2(50) NOT NULL,
+    reward_value  NUMBER(10,2) NOT NULL,
+    redeemed      CHAR(1) CHECK (redeemed IN ('Y', 'N')) NOT NULL,
+    reward_date   DATE NOT NULL,
+    CONSTRAINT fk_reward_user FOREIGN KEY (user_id) REFERENCES USERS(user_id),
+    CONSTRAINT fk_reward_txn FOREIGN KEY (txn_id) REFERENCES TRANSACTIONS(txn_id)
+);
+
+CREATE TABLE PAYMENT_METHODS (
+    method_id     VARCHAR2(50) PRIMARY KEY,
+    method_type   VARCHAR2(50) NOT NULL,
+    details       VARCHAR2(200),
+    user_id       VARCHAR2(50) NOT NULL,
+    CONSTRAINT fk_payment_user FOREIGN KEY (user_id) REFERENCES USERS(user_id)
+);
+
+CREATE TABLE TRANSACTION_HISTORY (
+    history_id        VARCHAR2(50) PRIMARY KEY,
+    txn_id            VARCHAR2(50) NOT NULL,
+    action_type       VARCHAR2(50) NOT NULL,
+    action_timestamp  TIMESTAMP NOT NULL,
+    CONSTRAINT fk_history_txn FOREIGN KEY (txn_id) REFERENCES TRANSACTIONS(txn_id)
+);
