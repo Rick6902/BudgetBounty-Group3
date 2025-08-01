@@ -37,7 +37,7 @@ CREATE TABLE RECIPIENT (
     name             VARCHAR2(100) NOT NULL,
     upi_id           VARCHAR2(100),
     account_number   VARCHAR2(30),
-    IFSC             VARCHAR2(20),
+    ifsc             VARCHAR2(20),
     bank_name        VARCHAR2(100)
 );
 
