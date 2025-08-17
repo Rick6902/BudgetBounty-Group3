@@ -95,6 +95,107 @@ public class TransactionService {
 			
 		
 		}
+		
+		
+		public  String verifyNEFT(TransactionDTO td) {
+			String msg = null;
+			
+			
+			
+			BankAccount senderacc=bankservice.finByuserID(td.getSenderId());
+			BankAccount receveracc=bankservice.findByAccountId(td.getCnfaccountNumber());
+			if (senderacc.getBalance()<Float.parseFloat(td.getAmount())) {
+				msg="Insuffiecient Balance";
+				
+				
+			}
+			else if(receveracc.getAccountId()==null) {
+				msg="Account Not Found";
+				
+				
+			}
+			else if(!receveracc.getIfsc().equals(td.getIfscCode())) {
+				msg="Invalid ISFC CODE";
+				
+			}
+			else if(!!receveracc.getName().equals(td.getBeneficiaryName())) {
+				msg="Name not Matched";
+			}
+			else {
+				senderacc.setBalance(senderacc.getBalance()-Float.parseFloat(td.getAmount()));
+				receveracc.setBalance(receveracc.getBalance()+Float.parseFloat(td.getAmount()));
+				bankservice.updateBalance(senderacc);
+				bankservice.updateBalance(receveracc);
+				
+				
+			}
+			Transaction trans=new Transaction();
+			trans.setTxnId(generateTransactionID(senderacc.getUser().getUserId(),receveracc.getUser().getUserId()));
+            trans.setUser(senderacc.getUser());
+            trans.setRecipient_id(receveracc.getUser().getUserId());
+			trans.setAmount(Float.parseFloat(td.getAmount()));
+//			trans.setTxnType(td.getType());
+			trans.setTxnStatus("Success");
+			trans.setTxnDate(new Date());
+			trans.setTxnChannel("NA");
+			trans.setRewards(null);
+			addTransaction(trans);
+			
+			return msg;
+			
+			
+		
+		}
+		
+		public  String verifyIMPS(TransactionDTO td) {
+			String msg = null;
+			
+			
+			
+			BankAccount senderacc=bankservice.finByuserID(td.getSenderId());
+			BankAccount receveracc=bankservice.findByAccountId(td.getCnfaccountNumber());
+			if (senderacc.getBalance()<Float.parseFloat(td.getAmount())) {
+				msg="Insuffiecient Balance";
+				
+				
+			}
+			else if(receveracc.getAccountId()==null) {
+				msg="Account Not Found";
+				
+				
+			}
+			else if(!receveracc.getIfsc().equals(td.getIfscCode())) {
+				msg="Invalid ISFC CODE";
+				
+			}
+			else if(!!receveracc.getName().equals(td.getBeneficiaryName())) {
+				msg="Name not Matched";
+			}
+			else {
+				senderacc.setBalance(senderacc.getBalance()-Float.parseFloat(td.getAmount()));
+				receveracc.setBalance(receveracc.getBalance()+Float.parseFloat(td.getAmount()));
+				bankservice.updateBalance(senderacc);
+				bankservice.updateBalance(receveracc);
+				
+				
+			}
+			Transaction trans=new Transaction();
+			trans.setTxnId(generateTransactionID(senderacc.getUser().getUserId(),receveracc.getUser().getUserId()));
+            trans.setUser(senderacc.getUser());
+            trans.setRecipient_id(receveracc.getUser().getUserId());
+			trans.setAmount(Float.parseFloat(td.getAmount()));
+//			trans.setTxnType(td.getType());
+			trans.setTxnStatus("Success");
+			trans.setTxnDate(new Date());
+			trans.setTxnChannel("NA");
+			trans.setRewards(null);
+			addTransaction(trans);
+			
+			return msg;
+			
+			
+		
+		}
 		//TransactionDTO [senderId=21, accountNumber=42709219, 
 		//cnfaccountNumber=42709219, IFSCCode=HDFC0000233, beneficiaryName=Munikarthik Vemula, amount=2000, note=]
 	
@@ -116,4 +217,3 @@ public class TransactionService {
 	
 
 }
-
