@@ -39,8 +39,11 @@ public class TransactionController {
 	public List<Transaction> newRTGSTransaction(@RequestBody TransactionDTO td) {
 		System.out.println(td.toString());
 		List<Transaction> t=service.findAll();
-		String msg=service.verify(td);
+		String msg=service.verifyRTGS(td);
 		return t;
+		
+		 
+		
 //		if (msg!=null) {
 //			return new ResponseEntity(t,HTTPStatus);
 //			
@@ -48,6 +51,24 @@ public class TransactionController {
 //		return (ResponseEntity<?>) ResponseEntity.notFound();
 		
 		
+		
+	}
+	
+	@PostMapping("/type=neft")
+	public List<Transaction> newNEFTTransaction(@RequestBody TransactionDTO td) {
+		System.out.println(td.toString());
+		List<Transaction> t=service.findAll();
+		String msg=service.verifyNEFT(td);
+		return t;
+		
+	}
+	
+	@PostMapping("/type=imps")
+	public List<Transaction> newIMPSTransaction(@RequestBody TransactionDTO td) {
+		System.out.println(td.toString());
+		List<Transaction> t=service.findAll();
+		String msg=service.verifyIMPS(td);
+		return t;
 		
 	}
 }
